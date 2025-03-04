@@ -6,9 +6,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Libreria - Bibliothèque en ligne</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .profile-menu {
+            z-index: 50;
+            position: absolute;
+            right: 0;
+            margin-top: 0.5rem;
+            width: 12rem;
+            border-radius: 0.375rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+    </style>
 </head>
 <body class="bg-gray-100">
-    <header class="bg-white shadow-md">
+    <header class="bg-white shadow-md relative">
         <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <!-- Logo -->
@@ -40,11 +51,18 @@
                                 </svg>
                             </button>
                             <!-- Menu déroulant -->
-                            <div id="profileMenu" class="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 hidden">
+                            <div id="profileMenu" class="profile-menu hidden bg-white ring-1 ring-black ring-opacity-5">
                                 <div class="py-1">
-                                    <a href="index.php?page=profil" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Mon profil</a>
-                                    <a href="index.php?page=mes-emprunts" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Mes emprunts</a>
-                                    <a href="index.php?page=deconnexion" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Déconnexion</a>
+                                    <a href="index.php?page=profil" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        Mon profil
+                                    </a>
+                                    <a href="index.php?page=mes-emprunts" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        Mes emprunts
+                                    </a>
+                                    <hr class="my-1">
+                                    <a href="index.php?page=deconnexion" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        Déconnexion
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -59,18 +77,18 @@
     </header>
 
     <script>
-        // Fonction pour basculer l'affichage du menu profil
         function toggleProfileMenu() {
             const menu = document.getElementById('profileMenu');
             menu.classList.toggle('hidden');
         }
 
-        // Fermer le menu si on clique en dehors
+        // Fermer le menu si on clique ailleurs sur la page
         document.addEventListener('click', function(event) {
             const menu = document.getElementById('profileMenu');
             const button = event.target.closest('button');
+            const menuContent = event.target.closest('.profile-menu');
             
-            if (!button && !menu.classList.contains('hidden')) {
+            if (!button && !menuContent && !menu.classList.contains('hidden')) {
                 menu.classList.add('hidden');
             }
         });

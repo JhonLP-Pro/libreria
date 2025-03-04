@@ -1,6 +1,7 @@
 <?php
-require_once('../model/utilisateurModel.php');
-require_once('../bdd/bdd.php');
+session_start();
+require_once(__DIR__ . '/../model/utilisateurModel.php');
+require_once(__DIR__ . '/../bdd/bdd.php');
 
 if(isset($_POST['action'])){
     $utilisateurController = new UtilisateurController($bdd);
@@ -33,46 +34,70 @@ class UtilisateurController{
 
     public function create()
     {    
-        // Vérifier que tous les champs sont remplis
-        if(empty($_POST['nom']) || empty($_POST['prénom']) || empty($_POST['adresse']) || empty($_POST['téléphone']) || empty($_POST['mdp'])) {
-            die("Tous les champs sont obligatoires");
-        }
+        try {
+            // Vérifier que tous les champs sont remplis
+            if(empty($_POST['nom']) || empty($_POST['prénom']) || empty($_POST['adresse']) || empty($_POST['téléphone']) || empty($_POST['mdp'])) {
+                $_SESSION['error'] = "Tous les champs sont obligatoires";
+                header('Location: ../index.php?page=connexion');
+                exit();
+            }
 
-        // Vérifier que l'adresse est un email valide
-        if (!filter_var($_POST['adresse'], FILTER_VALIDATE_EMAIL)) {
-            die("L'adresse email n'est pas valide");
-        }
+            // Vérifier que l'adresse est un email valide
+            if (!filter_var($_POST['adresse'], FILTER_VALIDATE_EMAIL)) {
+                $_SESSION['error'] = "L'adresse email n'est pas valide";
+                header('Location: ../index.php?page=connexion');
+                exit();
+            }
 
-        // Tenter d'ajouter l'utilisateur
-        $result = $this->utilisateur->ajouterUtilisateur(
-            $_POST['nom'], 
-            $_POST['prénom'], 
-            $_POST['adresse'],
-            $_POST['téléphone'],
-            $_POST['mdp']
-        );
-        
-        if($result) {
-            header('Location: /libreria/index.php?page=connexion');
-        } else {
-            die("Erreur lors de l'inscription. Veuillez réessayer.");
-        }    
+            // Tenter d'ajouter l'utilisateur
+            $result = $this->utilisateur->ajouterUtilisateur(
+                $_POST['nom'], 
+                $_POST['prénom'], 
+                $_POST['adresse'],
+                $_POST['téléphone'],
+                $_POST['mdp']
+            );
+
+            if($result) {
+                $_SESSION['success'] = "Inscription réussie ! Vous pouvez maintenant vous connecter.";
+                header('Location: ../index.php?page=connexion');
+                exit();
+            } else {
+                $_SESSION['error'] = "Une erreur est survenue lors de l'inscription";
+                header('Location: ../index.php?page=connexion');
+                exit();
+            }
+        } catch (Exception $e) {
+            $_SESSION['error'] = "Une erreur est survenue : " . $e->getMessage();
+            header('Location: ../index.php?page=connexion');
+            exit();
+        }
     }
 
     public function login()
-    {    
-        if (!isset($_POST['adresse']) || !isset($_POST['mdp'])) {
-            die("Veuillez remplir tous les champs du formulaire");
-        }
+    {
+        try {
+            if(empty($_POST['adresse']) || empty($_POST['mdp'])) {
+                $_SESSION['error'] = "Tous les champs sont obligatoires";
+                header('Location: ../index.php?page=connexion');
+                exit();
+            }
 
-        $user = $this->utilisateur->login($_POST['adresse'], $_POST['mdp']);
-
-        if ($user) {
-            session_start();
-            $_SESSION['user'] = $user;
-            header('Location: /libreria/index.php?page=accueil');
-        } else {
-            die("Adresse email ou mot de passe incorrect");
+            $user = $this->utilisateur->login($_POST['adresse'], $_POST['mdp']);
+            
+            if($user) {
+                $_SESSION['user'] = $user;
+                header('Location: ../index.php?page=accueil');
+                exit();
+            } else {
+                $_SESSION['error'] = "Email ou mot de passe incorrect";
+                header('Location: ../index.php?page=connexion');
+                exit();
+            }
+        } catch (Exception $e) {
+            $_SESSION['error'] = "Une erreur est survenue lors de la connexion";
+            header('Location: ../index.php?page=connexion');
+            exit();
         }
     }
 

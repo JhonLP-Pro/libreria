@@ -9,9 +9,8 @@
                 <div>
                     <h3 class="text-lg font-semibold mb-4">Liens rapides</h3>
                     <ul class="space-y-2">
-                        <li><a href="/accueil" class="text-gray-400 hover:text-white transition">Accueil</a></li>
-                        <li><a href="/catalogue" class="text-gray-400 hover:text-white transition">Catalogue</a></li>
-                        <li><a href="/mes-emprunts" class="text-gray-400 hover:text-white transition">Mes Emprunts</a></li>
+                        <li><a href="index.php?page=accueil" class="text-gray-400 hover:text-white transition">Accueil</a></li>
+                        <li><a href="index.php?page=catalogue" class="text-gray-400 hover:text-white transition">Catalogue</a></li>
                     </ul>
                 </div>
                 <div>

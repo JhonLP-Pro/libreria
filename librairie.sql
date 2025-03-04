@@ -8,7 +8,7 @@ CREATE TABLE type_utilisateur (
 );
 
 CREATE TABLE utilisateur (
-    id_utilisateur INT PRIMARY KEY,
+    id_utilisateur INT PRIMARY KEY AUTO_INCREMENT,
     nom VARCHAR(50),
     prénom VARCHAR(50),
     type_utilisateur int(11),
@@ -19,7 +19,7 @@ CREATE TABLE utilisateur (
 );
 
 CREATE TABLE Livre (
-    id_livre INT PRIMARY KEY,
+    id_livre INT PRIMARY KEY AUTO_INCREMENT,
     titre VARCHAR(100),
     auteur VARCHAR(50),
     année INT,
@@ -27,7 +27,7 @@ CREATE TABLE Livre (
 );
 
 CREATE TABLE Prêt (
-    id_prêt INT PRIMARY KEY,
+    id_prêt INT PRIMARY KEY AUTO_INCREMENT,
     date_emprunt DATE,
     date_retour DATE,
     état VARCHAR(20),
