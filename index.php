@@ -12,6 +12,10 @@ switch ($page) {
         include('view/connexion.php');
 		break;
 
+    case 'mes-emprunts':
+        include('view/mes-emprunts.php');
+        break;
+
     case 'catalogue':
         include('view/catalogue.php');
         break;

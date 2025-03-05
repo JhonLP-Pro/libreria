@@ -3,6 +3,13 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['type_utilisateur'] != 1) {
     header('Location: index.php?page=accueil');
     exit();
 }
+
+// Inclure les contrôleurs nécessaires
+require_once('controller/pretController.php');
+$pretController = new PretController($bdd);
+
+// Récupérer les prêts en cours
+$emprunts = $pretController->getPretsByStatus('en cours');
 ?>
 
 <div class="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
@@ -90,9 +97,59 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['type_utilisateur'] != 1) {
 
                 <!-- Onglet Voir les prêts -->
                 <div id="voir-prets" class="tab-content hidden">
-                    <p class="text-gray-500 text-center py-4">
-                        La gestion des prêts sera disponible prochainement.
-                    </p>
+                    <div class="bg-white shadow-sm rounded-lg overflow-hidden">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Livre</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Emprunteur</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date d'emprunt</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date limite</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                <?php foreach($emprunts as $emprunt): ?>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        <?php echo htmlspecialchars($emprunt['titre']); ?>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        <?php echo htmlspecialchars($emprunt['nom']) . ' ' . htmlspecialchars($emprunt['prenom']); ?>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        <?php echo date('d/m/Y', strtotime($emprunt['date_emprunt'])); ?>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm <?php echo $emprunt['est_en_retard'] ? 'text-red-600 font-semibold' : 'text-gray-900'; ?>">
+                                        <?php echo date('d/m/Y', strtotime($emprunt['date_limite'])); ?>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <?php if($emprunt['est_en_retard']): ?>
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                                En retard
+                                            </span>
+                                        <?php else: ?>
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                                En cours
+                                            </span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                        <form action="controller/pretController.php" method="POST">
+                                            <input type="hidden" name="action" value="retourner">
+                                            <input type="hidden" name="id_pret" value="<?php echo $emprunt['id_prêt']; ?>">
+                                            <button type="submit" 
+                                                    class="text-green-600 hover:text-green-900">
+                                                Marquer comme retourné
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
